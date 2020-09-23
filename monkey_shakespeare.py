@@ -71,7 +71,7 @@ class MonkeyShakespeare:
         fname: User specified file name
         fsize: File size in byte
         """
-        doc = ''.join([random.choice(string.ascii_letters) for i in range(self._byte(self._fsize))])
+        doc = ''.join([random.choice(string.ascii_lowercase) for i in range(self._byte(self._fsize))])
 
         with open(self._fname, 'w') as f:
             f.write(doc)
