@@ -18,7 +18,9 @@ class MonkeyShakespeare:
         fname = input("\nPlease name your file:\n")
         pattern = re.compile("^[\w\-. ]+$")
         while (not pattern.fullmatch(fname)):
-            fname = input(f"\n\"{fname}\" is not valid file name, please input another file name:\n")
+            fname = input(f"\n\"{fname}\" is not valid file name, please enter another file name:\n")
+        while (os.path.isfile(f"./{fname}")):
+            fname = input(f"\n\"{fname}\" already exists in this directory, please enter another file name:\n")
         return fname
 
     def _size_unit_guard(self):
@@ -41,8 +43,8 @@ class MonkeyShakespeare:
 
             # Handle large file size: prompt user to re-enter funit & fsize
             if (self._byte(fsize) > self._byte(2, 'gb')):
-                response = input(f"{fsize}{self._funit.upper()} is a large file size that might cause stack overflow, \
-                    do you still wish to continue? (Y/N)")
+                response = input(f"{fsize}{self._funit.upper()} is a large file size that might cause stack overflow, " +
+                    "do you still wish to continue? (Y/N)\n")
                 if (response[0].lower() == 'y'):
                     break
                 elif (response[0].lower() == 'n'):
