@@ -3,15 +3,23 @@ import string
 import math
 import re
 import os
+import io
 
 
 class MonkeyShakespeare:
+    """
+    Private Fields:
+    _fname(str):    Validated file name
+    _fsize(float):  File size in decimal
+    _funit(str):    Unit for _fize, can take 'kb'|'mb'|'gb'
 
+    Public Methods:
+    run():          Create a file of specified name and size with random characters
+    """
     def __init__(self):
         print("\n---- Random File Generator ----")
         self._fname = self._file_name_guard()
-        self._funit = self._size_unit_guard()
-        self._fsize = self._file_size_guard()
+        self._fsize, self._funit = self._file_size_guard()
 
     def _file_name_guard(self):
         """ Valid file name should not contain any of '<>:"/\\|?*' """
@@ -23,43 +31,17 @@ class MonkeyShakespeare:
             fname = input(f"\n\"{fname}\" already exists in this directory, please enter another file name:\n")
         return fname
 
-    def _size_unit_guard(self):
-        """ Accept 'kb', 'mb' or 'gb', not-case-sensitive """
-        funit = input("\nPlease enter a file size unit (kb/mb/gb):\n")
-        while (funit.lower() not in ['kb', 'mb', 'gb']):
-            funit = input(
-                f"\n\"{funit.lower()}\" is not a valid unit, please choose amongst kb/mb/gb:\n")
-        return funit
-
     def _file_size_guard(self):
-        """ Accept possitive integer or floating number, warning occurs when exceeds 2GB """
-        fsize = input("\nPlease enter file size:\n" +
+        """ Accept possitive integer or floating number with unit 'kb', 'mb' or 'gb' """
+        fsize_unit = input("\nPlease enter file size (e.g. \"30mb\" or \"150.25kb\"):\n" +
             "(WARNING: Choosing file larger than 2GB might cause stack overflow)\n")
-        while (not self._is_float(fsize) or self._byte(fsize) <= 0 or self._byte(fsize) > self._byte(3, 'gb')):
+        pattern = re.compile("(\d+\.?\d*)(kb|mb|gb)")
 
-            # Handle invalid file size
-            while (not self._is_float(fsize) or self._byte(fsize) <= 0):
-                fsize = input(f"\n\"{fsize}\" is not a valid file size, please enter a positive integer or float:\n")
+        while (not pattern.fullmatch(fsize_unit.lower())):
+            fsize_unit = input(f"\n\"{fsize_unit}\" is not a file size, please try again (e.g. \"30mb\" or \"150.25kb\"):\n")
 
-            # Handle large file size: prompt user to re-enter funit & fsize
-            if (self._byte(fsize) > self._byte(2, 'gb')):
-                response = input(f"{fsize}{self._funit.upper()} is a large file size that might cause stack overflow, " +
-                    "do you still wish to continue? (Y/N)\n")
-                if (response[0].lower() == 'y'):
-                    break
-                elif (response[0].lower() == 'n'):
-                    self._funit = self._size_unit_guard()
-                    fsize = input("Please enter file size as a number:\n")
-
-        return fsize
-
-    @staticmethod
-    def _is_float(value):
-        try:
-            float(value)
-            return True
-        except ValueError:
-            return False
+        fsize_unit_tuple = pattern.fullmatch(fsize_unit.lower()).groups()
+        return fsize_unit_tuple[0], fsize_unit_tuple[1]
 
     def _byte(self, value, unit=None):
         """ Convert string value in byte to number in specified unit """
@@ -87,8 +69,10 @@ class MonkeyShakespeare:
 
 
 def main():
-    MonkeyShakespeare().run()
-    input("\nPress ENTER to exit.")
+    respond = ""
+    while (respond.lower() != 'q'): 
+        MonkeyShakespeare().run()
+        respond = input("\nPress ENTER to continue, press 'q' to exit.\n")
 
 
 if __name__ == "__main__":
