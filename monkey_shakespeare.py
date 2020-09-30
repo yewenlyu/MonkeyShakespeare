@@ -50,11 +50,7 @@ class MonkeyShakespeare:
         return int(float(value) * 1024 * (1024 ** ['kb', 'mb', 'gb'].index(unit.lower())))
 
     def _monkey_shakespeare_write(self):
-        """ Generate file in specified size, filled with random characters 
-        Key Word Args:
-        fname: User specified file name
-        fsize: File size in byte
-        """
+        """ Generate file in specified size, filled with random characters """
         doc = ''.join([random.choice(string.ascii_lowercase) for i in range(self._byte(self._fsize))])
 
         with open(self._fname, 'w') as f:
