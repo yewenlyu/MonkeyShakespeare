@@ -1,9 +1,7 @@
 import random
 import string
-import math
 import re
 import os
-import io
 
 
 class MonkeyShakespeare:
@@ -16,29 +14,33 @@ class MonkeyShakespeare:
     Public Methods:
     run():          Create a file of specified name and size with random characters
     """
+
     def __init__(self):
         print("\n---- Random File Generator ----")
         self._fname = self._file_name_guard()
         self._fsize, self._funit = self._file_size_guard()
 
-    def _file_name_guard(self):
+    @staticmethod
+    def _file_name_guard():
         """ Valid file name should not contain any of '<>:"/\\|?*' """
         fname = input("\nPlease name your file:\n")
         pattern = re.compile("^[\w\-. ]+$")
-        while (not pattern.fullmatch(fname)):
+        while not pattern.fullmatch(fname):
             fname = input(f"\n\"{fname}\" is not valid file name, please enter another file name:\n")
-        while (os.path.isfile(f"./{fname}")):
+        while os.path.isfile(f"./{fname}"):
             fname = input(f"\n\"{fname}\" already exists in this directory, please enter another file name:\n")
         return fname
 
-    def _file_size_guard(self):
+    @staticmethod
+    def _file_size_guard():
         """ Accept possitive integer or floating number with unit 'kb', 'mb' or 'gb' """
         fsize_unit = input("\nPlease enter file size (e.g. \"30mb\" or \"150.25kb\"):\n" +
-            "(WARNING: Choosing file larger than 2GB might cause stack overflow)\n")
+                           "(WARNING: Choosing file larger than 2GB might cause stack overflow)\n")
         pattern = re.compile("(\d+\.?\d*)(kb|mb|gb)")
 
-        while (not pattern.fullmatch(fsize_unit.lower())):
-            fsize_unit = input(f"\n\"{fsize_unit}\" is not a file size, please try again (e.g. \"30mb\" or \"150.25kb\"):\n")
+        while not pattern.fullmatch(fsize_unit.lower()):
+            fsize_unit = input(
+                f"\n\"{fsize_unit}\" is not a file size, please try again (e.g. \"30mb\" or \"150.25kb\"):\n")
 
         fsize_unit_tuple = pattern.fullmatch(fsize_unit.lower()).groups()
         return fsize_unit_tuple[0], fsize_unit_tuple[1]
@@ -61,12 +63,12 @@ class MonkeyShakespeare:
         print(f"\nGenerating \"{self._fname}\" with size: {self._fsize}{self._funit.upper()}, please wait...")
         self._monkey_shakespeare_write()
         print("File generated at: " +
-            os.path.join(os.path.dirname(os.path.realpath(__file__)), self._fname))
+              os.path.join(os.path.dirname(os.path.realpath(__file__)), self._fname))
 
 
 def main():
     respond = ""
-    while (respond.lower() != 'q'): 
+    while respond.lower() != 'q':
         MonkeyShakespeare().run()
         respond = input("\nPress ENTER to continue, press 'q' to exit.\n")
 
